@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/config/palette.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_9.dart';
-
+import 'package:intl/intl.dart';
 class ChatBubbles extends StatelessWidget {
-  const ChatBubbles(this.message,this.isMe,this.userName,{super.key});
+  const ChatBubbles(this.message,this.isMe,this.userName,this.time,{super.key});
 
   final String message;
   final String userName;
+  final Timestamp time;
   final bool isMe;
 
   @override
@@ -40,6 +42,10 @@ class ChatBubbles extends StatelessWidget {
                       message,
                       style: TextStyle(color: Colors.white),
                     ),
+                    Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(time.toDate()),
+                      style:TextStyle(color: Colors.grey),
+
+                    )
                   ],
                 ),
               ),
@@ -68,6 +74,10 @@ class ChatBubbles extends StatelessWidget {
                       message,
                       style: TextStyle(color: Colors.white),
                     ),
+                    Text(
+                      DateFormat('yyyy-MM-dd HH:mm:ss').format(time.toDate()),
+                      style: TextStyle(color:Colors.grey),
+                    )
                   ],
                 ),
               ),
