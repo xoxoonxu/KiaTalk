@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterapp/screens/chat_screen.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class LoginSignupScreen extends StatefulWidget {
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
   final _authentication = FirebaseAuth.instance;
-
+  final GoogleSignIn googleSignIn = GoogleSignIn(); // GoogleSignIn 인스턴스 생성
   bool isSignupScreen = true;
   bool showSpinner =false;
 
@@ -28,7 +29,25 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       _formKey.currentState!.save();
     }
   }
-
+  Future<User?> _handleSignIn() async{
+    try{
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if(googleUser == null){
+        return null;
+      }
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final UserCredential authResult = await _authentication.signInWithCredential(credential);
+      final User? user = authResult.user;
+      return user;
+    }catch(error){
+      print(error);
+      return null;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -488,7 +507,83 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       height: 10,
                     ),
                     TextButton.icon(
-                      onPressed: (){},
+                      onPressed: () async{
+                        setState(() {
+                          showSpinner=true;
+                        });
+                        try{
+                          if(isSignupScreen){
+                            //구글로그인 버튼 클릭시
+                            final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+                            if(googleUser ==null){
+                              //사용자가 구글 로그인을 취소한 경우
+                              setState(() {
+                                showSpinner = false;
+                              });
+                              return;
+                            }
+                            final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+                            final AuthCredential credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken,idToken: googleAuth.idToken,
+                            );
+                            final UserCredential authResult = await _authentication.signInWithCredential(credential);
+                            final User? user = authResult.user;
+                            if(user != null){
+                              //구글 로그인 성공시
+                              //Firebase CloudFirestore'user'컬렉션에 사용자 정보 저장
+                              await FirebaseFirestore.instance.collection('user').doc(user!.uid).set({
+                                'userName' : user.displayName,
+                                'email':user.email
+                              });
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (context){
+                                  return ChatScreen();
+                                }
+                                ),
+                              );
+                              setState(() {
+                                showSpinner = false;
+                              });
+                            }
+                            else{
+                              //구글 로그인 실패시
+                            }
+                            setState(() {
+                              showSpinner = false;
+                            });
+
+                          }
+                          else{
+                            //로그인 화면일 경우
+                            final user = await _handleSignIn();
+                            if(user != null){
+                              //로그인 성공
+                              final userQuery = await FirebaseFirestore.instance.collection('user').where('email',isEqualTo: user.email).get();
+                              if (userQuery.docs.isEmpty) {
+                                // 동일한 이메일을 가진 사용자가 없는 경우에만 Firestore에 저장
+                                await FirebaseFirestore.instance.collection('user').doc(user.uid).set({
+                                  'userName': user.displayName,
+                                  'email': user.email
+                                });
+                              }
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (context){
+                                  return ChatScreen();
+                                }
+                                ),
+                              );
+                              setState(() {
+                                showSpinner = false;
+                              });
+                            }
+
+                          }
+                        } catch(error){
+                          print(error);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Google Sign-in failed'),backgroundColor: Colors.red,)
+                          );
+                        }
+                      },
                       style: TextButton.styleFrom(
                           primary: Colors.white,
                           minimumSize: Size(155, 40),
