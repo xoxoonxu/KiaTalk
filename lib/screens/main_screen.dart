@@ -64,7 +64,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   right: 0,
                   left: 0,
                   child:Container(
-                    height:300,
+                    height:MediaQuery.of(context).size.height*0.4,
                     decoration: BoxDecoration(
                         image:DecorationImage(
                             image: AssetImage('image/kiatigers.png'),
@@ -76,12 +76,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeIn,
-                top: 250,
+                top: MediaQuery.of(context).size.height*0.4,
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 500),
                   curve: Curves.easeIn,
                   padding: EdgeInsets.all(20.0),
-                  height: isSignupScreen ? 280.0 : 250.0,
+                  height: isSignupScreen ? MediaQuery.of(context).size.height*0.3 : MediaQuery.of(context).size.height*0.25,
                   width: MediaQuery.of(context).size.width - 40,
                   margin: EdgeInsets.symmetric(horizontal: 20.0),
                   decoration: BoxDecoration(
@@ -391,7 +391,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeIn,
-                top: isSignupScreen ? 500 : 460,
+                top: isSignupScreen ? MediaQuery.of(context).size.height*0.65 : MediaQuery.of(context).size.height*0.6,
                 right: 0,
                 left: 0,
                 child: Center(
