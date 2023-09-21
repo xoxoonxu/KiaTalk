@@ -60,6 +60,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
           },
           child: Stack(
             children: [
+
               Positioned(top: 0,
                   right: 0,
                   left: 0,
@@ -73,6 +74,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     ),
                   )),
               //배경
+
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeIn,
@@ -388,6 +390,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ),
               ),
               //텍스트 폼 필드
+
+
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeIn,
@@ -464,7 +468,44 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               });
                             }
                           }catch(e){
-                            print(e);
+                            String errorMessage = "로그인 중 오류가 발생했습니다.";
+                            if (e is FirebaseAuthException) {
+                              switch (e.code) {
+                                case 'user-not-found':
+                                  errorMessage = '이메일이 올바르지 않습니다.';
+                                  break;
+                                case 'wrong-password':
+                                  if(userEmail.contains("gmail"))
+                                    errorMessage = '아래에 구글 로그인 버튼을 눌러주세요';
+                                  else
+                                    errorMessage = '비밀번호가 올바르지 않습니다.';
+                                  break;
+                                default:
+                                  errorMessage = '로그인 중 오류가 발생했습니다.';
+                                  break;
+                              }
+                            }
+                            setState(() {
+                              showSpinner = false;
+                            });
+                            showDialog(
+                              context: context,
+                              builder: (context){
+                                return AlertDialog(
+                                  title: Text("로그인 오류"),
+                                  content: Text(errorMessage),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: (){
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("확인"),
+                                    )
+                                  ]
+                                );
+                              }
+
+                            );
                           }
                         }
                       },
@@ -494,6 +535,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ),
               ),
               //전송버튼
+              // AnimatedPositioned(
+              //   duration: Duration(milliseconds: 500),
+              //   curve: Curves
+              // )
+
+              //비밀번호 찾기 버튼
+
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeIn,
