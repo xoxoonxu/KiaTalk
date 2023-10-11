@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/config/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterapp/screens/chat_screen.dart';
+import 'package:flutterapp/screens/findPassword.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,6 +24,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userName = '';
   String userEmail = '';
   String userPassword = '';
+
   void _tryValidation(){
     final isValid = _formKey.currentState!.validate();
     if(isValid){
@@ -48,6 +50,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       return null;
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -535,12 +539,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ),
               ),
               //전송버튼
-              // AnimatedPositioned(
-              //   duration: Duration(milliseconds: 500),
-              //   curve: Curves
-              // )
 
-              //비밀번호 찾기 버튼
+              //비밀번호 찾기 버튼 구현
 
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),

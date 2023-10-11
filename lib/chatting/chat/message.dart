@@ -9,6 +9,7 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //현재 사용자가져오기
     final user = FirebaseAuth.instance.currentUser;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
@@ -28,11 +29,19 @@ class Messages extends StatelessWidget {
           reverse: true,
           itemCount: chatDocs.length,
           itemBuilder: (context, index) {
-            return ChatBubbles(chatDocs[index]['text'],
-            chatDocs[index]['userID'].toString()==user!.uid,
-            chatDocs[index]['userName'],
-              chatDocs[index]['time'],
-            );
+            final Map<String, dynamic>? data = chatDocs[index].data() as Map<String, dynamic>?;
+            // 필드가 존재하는지 확인 후 값에 접근
+            final String text = data?['text'] ?? '';
+            final bool isCurrentUser = data?['userID'].toString() == user!.uid;
+            final String userName = data?['userName'] ?? '';
+            final Timestamp time = data?['time'] ?? Timestamp.now();
+            final String? imageUrl = data?['url'];
+              return ChatBubbles(text,
+                  isCurrentUser,
+                  userName,
+                  time,
+                  imageUrl ?? ''
+              );
           },
         );
       },

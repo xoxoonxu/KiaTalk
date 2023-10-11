@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterapp/chatting/chat/message.dart';
 import 'package:flutterapp/chatting/chat/new_message.dart';
 import 'package:flutterapp/config/palette.dart';
+
 class ChatScreen extends StatefulWidget{
   const ChatScreen({Key? key}):super(key:key);
 

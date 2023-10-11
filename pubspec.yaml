@@ -41,6 +41,10 @@ dependencies:
   modal_progress_hud_nsn: ^0.4.0
   google_sign_in: ^6.1.5
   intl: ^0.18.1
+  image_picker: ^1.0.4
+  firebase_storage: ^11.2.8
+  url_launcher: ^6.1.14
+  video_player: ^2.7.2
 
 dev_dependencies:
   flutter_test:
