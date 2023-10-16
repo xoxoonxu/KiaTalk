@@ -20,13 +20,15 @@ class ChatBubbles extends StatelessWidget {
   final bool isMe;
 
   //url인지 확인하는 함수
-  bool isURL(String text){
-    try{
-      Uri.parse(text);
-      return true;
-    } catch(_){
-      return false;
-    }
+
+  bool isURL(String text) {
+    // URL 정규 표현식
+    final urlPattern = RegExp(
+      r'^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$',
+      caseSensitive: false,
+    );
+
+    return urlPattern.hasMatch(text);
   }
 
   @override
@@ -41,7 +43,7 @@ class ChatBubbles extends StatelessWidget {
             ),
           );
         }
-        else if(imageUrl! == ''&&message.isNotEmpty&&isURL(message))
+        else if(imageUrl! == ''&&message.isNotEmpty&&(isURL(message))==true)
           try {
             launch(message);
           } catch (e) {
@@ -82,10 +84,16 @@ class ChatBubbles extends StatelessWidget {
 
 
                       if(imageUrl! == '')
-                        if(message.isNotEmpty)
+                        if(message.isNotEmpty && !isURL(message))
                           Text(
                             message,
                             style:TextStyle(color:Colors.white),
+                          ),
+                      if(imageUrl! == '')
+                        if(message.isNotEmpty && isURL(message))
+                          Text(
+                            message,
+                            style:TextStyle(color:Colors.blue),
                           ),
 
 
@@ -125,10 +133,15 @@ class ChatBubbles extends StatelessWidget {
                           fit: BoxFit.fitWidth,
                         ),
 
-                      if (message.isNotEmpty&& imageUrl! == '') // 텍스트 메시지가 있는 경우
+                      if (message.isNotEmpty&& imageUrl! == ''&& !isURL(message)) // 텍스트 메시지가 있는 경우
                         Text(
                           message,
                           style: TextStyle(color: Colors.white),
+                        ),
+                      if (message.isNotEmpty&& imageUrl! == ''&& isURL(message)) // 텍스트 메시지가 있는 경우
+                        Text(
+                          message,
+                          style: TextStyle(color: Colors.blue),
                         ),
                       Text(
                         DateFormat('yyyy-MM-dd HH:mm:ss').format(time.toDate()),
