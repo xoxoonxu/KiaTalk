@@ -6,6 +6,8 @@ import 'package:flutterapp/chatting/chat/new_message.dart';
 import 'package:flutterapp/config/palette.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:flutterapp/config/match.dart';
+
 class ChatScreen extends StatefulWidget{
   const ChatScreen({Key? key}):super(key:key);
 
@@ -15,9 +17,10 @@ class ChatScreen extends StatefulWidget{
 
 class _ChatScreenState extends State<ChatScreen>{
   final _authentication = FirebaseAuth.instance;
+  final Match _matchInstance = Match();
   User? loggedUser;
   final String ranking = 'https://m.sports.naver.com/kbaseball/record/index';
-
+ // String match = _matchInstance.getMatchForToday();
   String naversports = '';
   @override
   void initState(){
@@ -41,13 +44,44 @@ class _ChatScreenState extends State<ChatScreen>{
       appBar: AppBar(
         backgroundColor: Palette.activeColor,
         title: InkWell(
-          onTap: () {
-            naversports = 'https://m.sports.naver.com/game/'+DateFormat('yyyyMMdd').format(DateTime.now())+'NCHT'+'0'+DateTime.now().year.toString()+'/record';
-            launch(naversports);
-            // 여기에 Chat screen을 터치할 때 실행할 코드를 추가하세요.
-            print('Chat screen을 터치했습니다.');
+          onTap: () async {
+            String matchLink = await _matchInstance.getMatchLink();
+            if(matchLink=='경기 없음')
+              showDialog(
+                context: context,
+                builder: (BuildContext context){
+                  return AlertDialog(
+                    title:Text('경기없음'),
+                    content: Text('오늘 경기 기록이 없습니다.'),
+                    actions: [
+                      TextButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        child: Text('확인'),
+                      )
+                    ],
+                  );
+                }
+              );
+            else{
+              naversports = 'https://m.sports.naver.com/game/'+matchLink+DateTime.now().year.toString()+'/record';
+              launch(naversports);
+            }
+
           },
-          child: Text('Chat screen'),
+          child: FutureBuilder<String>(
+            future: _matchInstance.getMatchForToday(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('로딩 중...'); // 또는 로딩 인디케이터
+              } else if (snapshot.hasError) {
+                return Text('에러: ${snapshot.error}');
+              } else {
+                return Text(snapshot.data ?? '');
+              }
+            },
+          ),
         ),
         actions: [
           IconButton(
