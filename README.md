@@ -24,7 +24,7 @@ KBO 기아 타이거즈의 경기 기록, 리그 순위를 간편하게 볼 수 
 
 소프트웨어 전공으로 처음으로 진행한 프로젝트입니다.
 
-[코딩셰프](https://www.youtube.com/watch?v=0LNUSnmzDg4&list=PLQt_pzi-LLfrhI7B4mdx17ynreM0UwCzR) 를 보고
+[코딩셰프 플러터 채팅앱](https://www.youtube.com/watch?v=0LNUSnmzDg4&list=PLQt_pzi-LLfrhI7B4mdx17ynreM0UwCzR) 을 보고
 
 ### Flutter와 Firebase를
 사용해보며 Flutter와 Firebase의 특징을 공부할 수 있었습니다.
